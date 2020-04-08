@@ -1,32 +1,67 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+  <v-app>
+    <nav>
+    <jf-side-bar v-if="user" />
+    </nav>
+      
+     <!-- <div id="nav">
+      <router-link v-if="!user"  to="/">Home</router-link> |
+      <router-link to="/about">About</router-link> |
+      <button v-if="user" @click="logout()">sal</button> |
+    </div> -->
+    <v-container>
+      <!-- <v-row justify="center"> -->
+        <!-- <v-col md="4"> -->
+          <router-view/>
+          
+        <!-- </v-col> -->
+      <!-- </v-row>             -->
+    </v-container>
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import JfSideBar from '@/components/layouts/JfSideBar';
+import firebase from 'firebase'
+console.log(4);
+// var Cuser = firebase.auth().currentUser
 
-#nav {
-  padding: 30px;
-}
+export default {
+  name: 'App',
+   components: {
+    JfSideBar,
+    // firebase
+  },
+  props:['myPresident'],
+  data : () => ({
+    user: false,
+    itemsTable:[]
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+  }),
+        created(){
+            firebase.auth().onAuthStateChanged( user => {
+                if (user) {
+                    console.log('userX'+user);
+                    this.user = user
+                    
+                } else {
+                    console.log('userXno'+user);
+                    this.user = null
+                }
+            })
+            console.log(1);
+            
+        },
+        mounted(){
+         
+        },
 
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+ 
+  methods: {
+    logout(){
+      firebase.auth().signOut()
+      .then( () => this.$router.replace('/'))
+    }
+    }
+};
+</script>
